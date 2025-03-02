@@ -214,9 +214,30 @@ When working with this codebase, follow these guidelines:
 
 This project is licensed under the Apache License 2.0 - see the LICENSE file for details.
 
+## Deployment
 
+### Vercel Configuration
 
-##Changelog
+For successful deployment to Vercel, ensure:
+
+1. **Proper Turborepo Configuration**: The `turbo.json` file should properly define dependencies between packages. In particular, the `typecheck` task must depend on `^build` to ensure workspace packages are built before they are imported.
+
+2. **Environment Variables**: Set up the following environment variables in your Vercel project:
+   - `OPENAI_API_KEY` - API key for OpenAI services
+
+3. **Build Command**: Vercel should use `pnpm build` as the build command.
+
+4. **Output Directory**: The output directory should be set to `apps/web/.next`.
+
+### Troubleshooting Common Deployment Issues
+
+- **Module Resolution Errors**: If you see errors like `Cannot find module 'mindcraft-editor'`, check that your Turborepo configuration ensures packages are built before they're imported.
+  
+- **Type Checking Errors**: Make sure local package dependencies use `workspace:*` or `workspace:^` in package.json and that build steps are properly ordered.
+
+- **Build Cache Issues**: If changes aren't reflected after deployment, try clearing the Vercel build cache.
+
+## Changelog
 
 Mar 2
 Refactor: Migrate from Novel to Mindcraft, enhance type safety and editor utilities
@@ -229,3 +250,9 @@ This comprehensive refactoring includes:
 - Replaced direct editor access with safer wrapper functions
 - Migrated components to use new type-safe utilities
 - Added new tooltip and click-outside hook components
+
+Mar 15
+Fix: Update Turborepo configuration for correct build order
+- Updated `typecheck` task to depend on `^build` instead of `^topo`
+- Ensures local packages are built before they are type-checked by dependents
+- Added deployment documentation
