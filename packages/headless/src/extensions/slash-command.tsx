@@ -6,6 +6,8 @@ import type { RefObject } from "react";
 import type { ReactNode } from "react";
 import tippy, { type GetReferenceClientRect, type Instance, type Props } from "tippy.js";
 import { EditorCommandOut } from "../components/editor-command";
+import type { ComponentRef } from "../utils/component-types";
+import { hasMethod } from "../utils/component-types";
 
 const Command = Extension.create({
   name: "slash-command",
@@ -49,7 +51,8 @@ const renderItems = (elementRef?: RefObject<Element> | null) => {
         return false;
       }
 
-      // @ts-ignore
+      // Revert to the original implementation with a comment explaining the issue
+      // @ts-ignore - Tippy has incompatible typings; this is a known issue
       popup = tippy("body", {
         getReferenceClientRect: props.clientRect,
         appendTo: () => (elementRef ? elementRef.current : document.body),
@@ -75,8 +78,14 @@ const renderItems = (elementRef?: RefObject<Element> | null) => {
         return true;
       }
 
-      // @ts-ignore
-      return component?.ref?.onKeyDown(props);
+      // Safe handling of component ref's onKeyDown method
+      // @ts-ignore - TipTap KeyboardEvent types are incompatible with React KeyboardEvent
+      if (component?.ref && hasMethod(component.ref, 'onKeyDown')) {
+        // Cast as any since we've already checked that the method exists
+        return (component.ref as any).onKeyDown(props);
+      }
+      
+      return false;
     },
     onExit: () => {
       popup?.[0]?.destroy();

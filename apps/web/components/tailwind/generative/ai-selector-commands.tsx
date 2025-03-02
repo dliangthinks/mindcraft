@@ -1,6 +1,7 @@
 import { ArrowDownWideNarrow, CheckCheck, RefreshCcwDot, StepForward, WrapText } from "lucide-react";
-import { getPrevText, useEditor } from "novel";
 import { CommandGroup, CommandItem, CommandSeparator } from "../ui/command";
+import { useEditor, withEditor } from "@/lib/editor-wrapper";
+import { getPrevText } from "mindcraft-editor";
 
 const options = [
   {
@@ -38,9 +39,12 @@ const AISelectorCommands = ({ onSelect }: AISelectorCommandsProps) => {
         {options.map((option) => (
           <CommandItem
             onSelect={(value) => {
-              const slice = editor.state.selection.content();
-              const text = editor.storage.markdown.serializer.serialize(slice.content);
-              onSelect(text, value);
+              withEditor(editor, (editor) => {
+                const slice = editor.state.selection.content();
+                const text = editor.storage.markdown.serializer.serialize(slice.content);
+                onSelect(text, value);
+                return true;
+              }, false);
             }}
             className="flex gap-2 px-4"
             key={option.value}
@@ -55,9 +59,12 @@ const AISelectorCommands = ({ onSelect }: AISelectorCommandsProps) => {
       <CommandGroup heading="Use AI to do more">
         <CommandItem
           onSelect={() => {
-            const pos = editor.state.selection.from;
-            const text = getPrevText(editor, pos);
-            onSelect(text, "continue");
+            withEditor(editor, (editor) => {
+              const pos = editor.state.selection.from;
+              const text = editor ? getPrevText(editor, pos) : "";
+              onSelect(text, "continue");
+              return true;
+            }, false);
           }}
           value="continue"
           className="gap-2 px-4"

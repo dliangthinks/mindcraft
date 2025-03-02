@@ -11,77 +11,87 @@ import {
   TextIcon,
   TextQuote,
 } from "lucide-react";
-import { EditorBubbleItem, useEditor } from "novel";
+import { EditorBubbleItem, type EditorInstance } from "mindcraft-editor";
 
 import { Button } from "@/components/tailwind/ui/button";
 import { PopoverContent, PopoverTrigger } from "@/components/tailwind/ui/popover";
 import { Popover } from "@radix-ui/react-popover";
+import { useEditor, withEditor, isEditorActive, safeChain } from "@/lib/editor-wrapper";
 
 export type SelectorItem = {
   name: string;
   icon: LucideIcon;
-  command: (editor: ReturnType<typeof useEditor>["editor"]) => void;
-  isActive: (editor: ReturnType<typeof useEditor>["editor"]) => boolean;
+  command: (editor: EditorInstance) => void;
+  isActive: (editor: EditorInstance) => boolean;
 };
+
+// Define a partial item type for the fallback case
+type PartialItem = Pick<SelectorItem, 'name'>;
 
 const items: SelectorItem[] = [
   {
     name: "Text",
     icon: TextIcon,
-    command: (editor) => editor.chain().focus().clearNodes().run(),
+    command: (editor) => safeChain(editor)?.focus().clearNodes().run(),
     // I feel like there has to be a more efficient way to do this – feel free to PR if you know how!
-    isActive: (editor) =>
-      editor.isActive("paragraph") && !editor.isActive("bulletList") && !editor.isActive("orderedList"),
+    isActive: (editor) => 
+      isEditorActive(editor, "paragraph") && 
+      !isEditorActive(editor, "bulletList") && 
+      !isEditorActive(editor, "orderedList"),
   },
   {
     name: "Heading 1",
     icon: Heading1,
-    command: (editor) => editor.chain().focus().clearNodes().toggleHeading({ level: 1 }).run(),
-    isActive: (editor) => editor.isActive("heading", { level: 1 }),
+    command: (editor) => safeChain(editor)?.focus().clearNodes().toggleHeading({ level: 1 }).run(),
+    isActive: (editor) => isEditorActive(editor, "heading", { level: 1 }),
   },
   {
     name: "Heading 2",
     icon: Heading2,
-    command: (editor) => editor.chain().focus().clearNodes().toggleHeading({ level: 2 }).run(),
-    isActive: (editor) => editor.isActive("heading", { level: 2 }),
+    command: (editor) => safeChain(editor)?.focus().clearNodes().toggleHeading({ level: 2 }).run(),
+    isActive: (editor) => isEditorActive(editor, "heading", { level: 2 }),
   },
   {
     name: "Heading 3",
     icon: Heading3,
-    command: (editor) => editor.chain().focus().clearNodes().toggleHeading({ level: 3 }).run(),
-    isActive: (editor) => editor.isActive("heading", { level: 3 }),
+    command: (editor) => safeChain(editor)?.focus().clearNodes().toggleHeading({ level: 3 }).run(),
+    isActive: (editor) => isEditorActive(editor, "heading", { level: 3 }),
   },
   {
     name: "To-do List",
     icon: CheckSquare,
-    command: (editor) => editor.chain().focus().clearNodes().toggleTaskList().run(),
-    isActive: (editor) => editor.isActive("taskItem"),
+    command: (editor) => safeChain(editor)?.focus().clearNodes().toggleTaskList().run(),
+    isActive: (editor) => isEditorActive(editor, "taskItem"),
   },
   {
     name: "Bullet List",
     icon: ListOrdered,
-    command: (editor) => editor.chain().focus().clearNodes().toggleBulletList().run(),
-    isActive: (editor) => editor.isActive("bulletList"),
+    command: (editor) => safeChain(editor)?.focus().clearNodes().toggleBulletList().run(),
+    isActive: (editor) => isEditorActive(editor, "bulletList"),
   },
   {
     name: "Numbered List",
     icon: ListOrdered,
-    command: (editor) => editor.chain().focus().clearNodes().toggleOrderedList().run(),
-    isActive: (editor) => editor.isActive("orderedList"),
+    command: (editor) => safeChain(editor)?.focus().clearNodes().toggleOrderedList().run(),
+    isActive: (editor) => isEditorActive(editor, "orderedList"),
   },
   {
     name: "Quote",
     icon: TextQuote,
-    command: (editor) => editor.chain().focus().clearNodes().toggleBlockquote().run(),
-    isActive: (editor) => editor.isActive("blockquote"),
+    command: (editor) => safeChain(editor)?.focus().clearNodes().toggleBlockquote().run(),
+    isActive: (editor) => isEditorActive(editor, "blockquote"),
   },
   {
     name: "Code",
     icon: Code,
-    command: (editor) => editor.chain().focus().clearNodes().toggleCodeBlock().run(),
-    isActive: (editor) => editor.isActive("codeBlock"),
+    command: (editor) => safeChain(editor)?.focus().clearNodes().toggleCodeBlock().run(),
+    isActive: (editor) => isEditorActive(editor, "codeBlock"),
   },
 ];
+
+// Create a fallback item with just the name
+const fallbackItem: PartialItem = { name: "Multiple" };
+
 interface NodeSelectorProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -89,10 +99,12 @@ interface NodeSelectorProps {
 
 export const NodeSelector = ({ open, onOpenChange }: NodeSelectorProps) => {
   const { editor } = useEditor();
-  if (!editor) return null;
-  const activeItem = items.filter((item) => item.isActive(editor)).pop() ?? {
-    name: "Multiple",
-  };
+  
+  // Use withEditor to safely handle the editor and ensure we always have a value
+  const activeItem = withEditor(editor, 
+    (ed) => items.filter((item) => item.isActive(ed)).pop() || fallbackItem,
+    fallbackItem
+  ) || fallbackItem;
 
   return (
     <Popover modal={true} open={open} onOpenChange={onOpenChange}>

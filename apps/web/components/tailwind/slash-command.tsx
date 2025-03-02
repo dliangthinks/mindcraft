@@ -13,8 +13,9 @@ import {
   Twitter,
   Youtube,
 } from "lucide-react";
-import { Command, createSuggestionItems, renderItems } from "novel";
+import { Command, createSuggestionItems, renderItems } from "mindcraft-editor";
 import { uploadFn } from "./image-upload";
+import { safeguard } from "@/lib/editor-wrapper";
 
 export const suggestionItems = createSuggestionItems([
   {
@@ -119,7 +120,10 @@ export const suggestionItems = createSuggestionItems([
         if (input.files?.length) {
           const file = input.files[0];
           const pos = editor.view.state.selection.from;
-          uploadFn(file, editor.view, pos);
+          // Only call uploadFn if file is not undefined
+          if (file) {
+            uploadFn(file, editor.view, pos);
+          }
         }
       };
       input.click();
@@ -137,7 +141,8 @@ export const suggestionItems = createSuggestionItems([
         /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/,
       );
 
-      if (ytregex.test(videoLink)) {
+      // Only test if videoLink is not null
+      if (videoLink && ytregex.test(videoLink)) {
         editor
           .chain()
           .focus()
@@ -162,7 +167,8 @@ export const suggestionItems = createSuggestionItems([
       const tweetLink = prompt("Please enter Twitter Link");
       const tweetRegex = new RegExp(/^https?:\/\/(www\.)?x\.com\/([a-zA-Z0-9_]{1,15})(\/status\/(\d+))?(\/\S*)?$/);
 
-      if (tweetRegex.test(tweetLink)) {
+      // Only test if tweetLink is not null
+      if (tweetLink && tweetRegex.test(tweetLink)) {
         editor
           .chain()
           .focus()

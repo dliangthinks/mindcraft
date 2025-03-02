@@ -1,7 +1,7 @@
 {
-  "name": "novel",
+  "name": "mindcraft-editor",
   "version": "1.0.0",
-  "description": "Notion-style WYSIWYG editor with AI-powered autocompletions",
+  "description": "Rich text editor with sidebar integration for mindcraft project",
   "license": "Apache-2.0",
   "type": "module",
   "main": "dist/index.cjs",
@@ -62,19 +62,19 @@
     "tsup": "^8.3.5",
     "typescript": "^5.7.3"
   },
-  "author": "Steven Tey <stevensteel97@gmail.com>",
-  "homepage": "https://novel.sh",
+  "author": "Mindcraft Team",
+  "homepage": "https://github.com/dliangthinks/mindcraft",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/steven-tey/novel.git"
+    "url": "git+https://github.com/dliangthinks/mindcraft.git"
   },
   "bugs": {
-    "url": "https://github.com/steven-tey/novel/issues"
+    "url": "https://github.com/dliangthinks/mindcraft/issues"
   },
   "keywords": [
-    "ai",
-    "novel",
+    "mindcraft",
     "editor",
+    "sidebar",
     "markdown",
     "nextjs",
     "react"

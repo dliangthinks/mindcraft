@@ -1,8 +1,9 @@
-import { EditorBubble, removeAIHighlight, useEditor } from "novel";
+import { EditorBubble, useEditor } from "mindcraft-editor";
 import { Fragment, type ReactNode, useEffect } from "react";
 import { Button } from "../ui/button";
 import Magic from "../ui/icons/magic";
 import { AISelector } from "./ai-selector";
+import { removeAIHighlight, safeChain } from "@/lib/editor-wrapper";
 
 interface GenerativeMenuSwitchProps {
   children: ReactNode;
@@ -15,18 +16,25 @@ const GenerativeMenuSwitch = ({ children, open, onOpenChange }: GenerativeMenuSw
   useEffect(() => {
     if (!open) removeAIHighlight(editor);
   }, [open]);
+  
+  const handleAIComplete = (text: string, option: string) => {
+    // Handle AI completion here
+    console.log("AI completion:", text, option);
+    onOpenChange(false);
+  };
+  
   return (
     <EditorBubble
       tippyOptions={{
         placement: open ? "bottom-start" : "top",
         onHidden: () => {
           onOpenChange(false);
-          editor.chain().unsetHighlight().run();
+          safeChain(editor)?.unsetHighlight().run();
         },
       }}
       className="flex w-fit max-w-[90vw] overflow-hidden rounded-md border border-muted bg-background shadow-xl"
     >
-      {open && <AISelector open={open} onOpenChange={onOpenChange} />}
+      {open && <AISelector onAIComplete={handleAIComplete} />}
       {!open && (
         <Fragment>
           <Button

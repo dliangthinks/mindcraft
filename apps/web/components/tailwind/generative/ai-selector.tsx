@@ -1,111 +1,102 @@
 "use client";
 
-import { Command, CommandInput } from "@/components/tailwind/ui/command";
-
-import { useCompletion } from "ai/react";
-import { ArrowUp } from "lucide-react";
-import { useEditor } from "novel";
-import { addAIHighlight } from "novel";
-import { useState } from "react";
-import Markdown from "react-markdown";
-import { toast } from "sonner";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "cmdk";
+import { LucideCommand, Wand2 } from "lucide-react";
+import type { FC, KeyboardEvent } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Tooltip } from "../ui/tooltip";
 import { Button } from "../ui/button";
-import CrazySpinner from "../ui/icons/crazy-spinner";
-import Magic from "../ui/icons/magic";
-import { ScrollArea } from "../ui/scroll-area";
-import AICompletionCommands from "./ai-completion-command";
+import { useEditor, withEditor, addAIHighlight } from "@/lib/editor-wrapper";
+import { useOnClickOutside } from "@/lib/hooks/use-on-click-outside";
 import AISelectorCommands from "./ai-selector-commands";
-//TODO: I think it makes more sense to create a custom Tiptap extension for this functionality https://tiptap.dev/docs/editor/ai/introduction
 
-interface AISelectorProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+interface AISelector {
+  onAIComplete: (text: string, option: string) => void;
 }
 
-export function AISelector({ onOpenChange }: AISelectorProps) {
+export const AISelector: FC<AISelector> = ({ onAIComplete }) => {
   const { editor } = useEditor();
-  const [inputValue, setInputValue] = useState("");
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const { completion, complete, isLoading } = useCompletion({
-    // id: "novel",
-    api: "/api/generate",
-    onResponse: (response) => {
-      if (response.status === 429) {
-        toast.error("You have reached your request limit for the day.");
-        return;
-      }
-    },
-    onError: (e) => {
-      toast.error(e.message);
-    },
+  useOnClickOutside(containerRef, () => {
+    setOpen(false);
   });
 
-  const hasCompletion = completion.length > 0;
+  const onKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+        e.preventDefault();
+      }
+      if (e.key === "Escape") {
+        e.preventDefault();
+        setOpen(false);
+      }
+    },
+    // id: "novel",
+    [],
+  );
+
+  useEffect(() => {
+    if (!open) {
+      withEditor(editor, (ed) => {
+        ed.chain().unsetHighlight().focus().run();
+      });
+    }
+  }, [open, editor]);
 
   return (
-    <Command className="w-[350px]">
-      {hasCompletion && (
-        <div className="flex max-h-[400px]">
-          <ScrollArea>
-            <div className="prose p-2 px-4 prose-sm">
-              <Markdown>{completion}</Markdown>
-            </div>
-          </ScrollArea>
+    <div className="relative h-9" ref={containerRef}>
+      <Tooltip content="Generate with AI">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="size-9 rounded-lg"
+          onClick={() => {
+            setOpen((prev) => !prev);
+          }}
+          onFocus={() => withEditor(editor, (ed) => addAIHighlight(ed))}
+        >
+          <Wand2 className="h-4 w-4 text-purple-500" />
+        </Button>
+      </Tooltip>
+      {open && (
+        <div className="novel-ai-command animate-in fade-in slide-in-from-top-1 fixed left-0 top-2 z-[99] w-72 items-center rounded-lg border border-border bg-background shadow-xl">
+          <Command className="novel-command" onKeyDown={onKeyDown}>
+            <CommandInput placeholder="Ask AI..." autoFocus />
+            <CommandList className="novel-command-list small-scrollbar max-h-[400px] overflow-auto">
+              <CommandEmpty className="px-4 py-2.5 text-sm">Write a prompt...</CommandEmpty>
+              <CommandGroup className="px-2 pb-2">
+                <CommandItem
+                  className="flex gap-2 px-4"
+                  value="generate"
+                  onSelect={() => {
+                    withEditor(editor, (ed) => {
+                      const slice = ed.state.selection.content();
+                      const text = ed.storage.markdown.serializer.serialize(slice.content);
+                      onAIComplete(text, "generate");
+                      setOpen(false);
+                    });
+                  }}
+                >
+                  <LucideCommand className="h-4 w-4 text-purple-500" />
+                  Generate
+                </CommandItem>
+
+                <AISelectorCommands
+                  onSelect={(val, option) => {
+                    onAIComplete(val, option);
+                    setOpen(false);
+                    withEditor(editor, (ed) => {
+                      ed.chain().unsetHighlight().focus().run();
+                    });
+                  }}
+                />
+              </CommandGroup>
+            </CommandList>
+          </Command>
         </div>
       )}
-
-      {isLoading && (
-        <div className="flex h-12 w-full items-center px-4 text-sm font-medium text-muted-foreground text-purple-500">
-          <Magic className="mr-2 h-4 w-4 shrink-0  " />
-          AI is thinking
-          <div className="ml-2 mt-1">
-            <CrazySpinner />
-          </div>
-        </div>
-      )}
-      {!isLoading && (
-        <>
-          <div className="relative">
-            <CommandInput
-              value={inputValue}
-              onValueChange={setInputValue}
-              autoFocus
-              placeholder={hasCompletion ? "Tell AI what to do next" : "Ask AI to edit or generate..."}
-              onFocus={() => addAIHighlight(editor)}
-            />
-            <Button
-              size="icon"
-              className="absolute right-2 top-1/2 h-6 w-6 -translate-y-1/2 rounded-full bg-purple-500 hover:bg-purple-900"
-              onClick={() => {
-                if (completion)
-                  return complete(completion, {
-                    body: { option: "zap", command: inputValue },
-                  }).then(() => setInputValue(""));
-
-                const slice = editor.state.selection.content();
-                const text = editor.storage.markdown.serializer.serialize(slice.content);
-
-                complete(text, {
-                  body: { option: "zap", command: inputValue },
-                }).then(() => setInputValue(""));
-              }}
-            >
-              <ArrowUp className="h-4 w-4" />
-            </Button>
-          </div>
-          {hasCompletion ? (
-            <AICompletionCommands
-              onDiscard={() => {
-                editor.chain().unsetHighlight().focus().run();
-                onOpenChange(false);
-              }}
-              completion={completion}
-            />
-          ) : (
-            <AISelectorCommands onSelect={(value, option) => complete(value, { body: { option } })} />
-          )}
-        </>
-      )}
-    </Command>
+    </div>
   );
-}
+};

@@ -13,7 +13,7 @@ import {
   handleCommandNavigation,
   handleImageDrop,
   handleImagePaste,
-} from "novel";
+} from "mindcraft-editor";
 import { useEffect, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { defaultExtensions } from "./extensions";
@@ -32,6 +32,13 @@ const hljs = require("highlight.js");
 
 const extensions = [...defaultExtensions, slashCommand];
 
+// Safely executes a command if it exists
+function executeCommand(command?: ((val?: any) => void) | null, value?: any): void {
+  if (typeof command === 'function') {
+    command(value);
+  }
+}
+
 const TailwindAdvancedEditor = () => {
   const [initialContent, setInitialContent] = useState<null | JSONContent>(null);
   const [saveStatus, setSaveStatus] = useState("Saved");
@@ -46,9 +53,10 @@ const TailwindAdvancedEditor = () => {
   const highlightCodeblocks = (content: string) => {
     const doc = new DOMParser().parseFromString(content, "text/html");
     doc.querySelectorAll("pre code").forEach((el) => {
-      // @ts-ignore
-      // https://highlightjs.readthedocs.io/en/latest/api.html?highlight=highlightElement#highlightelement
-      hljs.highlightElement(el);
+      // Safe check for highlightjs functionality
+      if (hljs && typeof hljs.highlightElement === "function") {
+        hljs.highlightElement(el);
+      }
     });
     return new XMLSerializer().serializeToString(doc);
   };
@@ -106,7 +114,7 @@ const TailwindAdvancedEditor = () => {
               {suggestionItems.map((item) => (
                 <EditorCommandItem
                   value={item.title}
-                  onCommand={(val) => item.command(val)}
+                  onCommand={(val) => executeCommand(item.command, val)}
                   className="flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm hover:bg-accent aria-selected:bg-accent"
                   key={item.title}
                 >

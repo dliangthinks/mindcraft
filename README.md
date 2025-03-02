@@ -1,104 +1,231 @@
-<a href="https://novel.sh">
-  <img alt="Novel is a Notion-style WYSIWYG editor with AI-powered autocompletions." src="https://novel.sh/opengraph-image.png">
-  <h1 align="center">Novel</h1>
-</a>
+# Mindcraft
 
-<p align="center">
-  An open-source Notion-style WYSIWYG editor with AI-powered autocompletions. 
-</p>
+Mindcraft is a next generation writing platform where human collaborate with AI. 
+It's built on top of a Notion-style WYSIWYG editor with extended functionality to support sidebars and specialized content presentation.
 
-<p align="center">
-  <a href="https://news.ycombinator.com/item?id=36360789"><img src="https://img.shields.io/badge/Hacker%20News-369-%23FF6600" alt="Hacker News"></a>
-  <a href="https://github.com/steven-tey/novel/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/steven-tey/novel?label=license&logo=github&color=f80&logoColor=fff" alt="License" />
-  </a>
-  <a href="https://github.com/steven-tey/novel"><img src="https://img.shields.io/github/stars/steven-tey/novel?style=social" alt="Novel.sh's GitHub repo"></a>
-</p>
+## Project Overview
 
-<p align="center">
-  <a href="#introduction"><strong>Introduction</strong></a> ·
-  <a href="#deploy-your-own"><strong>Deploy Your Own</strong></a> ·
-  <a href="#setting-up-locally"><strong>Setting Up Locally</strong></a> ·
-  <a href="#tech-stack"><strong>Tech Stack</strong></a> ·
-  <a href="#contributing"><strong>Contributing</strong></a> ·
-  <a href="#license"><strong>License</strong></a>
-</p>
-<br/>
+Mindcraft is a monorepo project built with:
 
-## Docs (WIP)
+- **Next.js**: For the web application frontend
+- **TipTap**: For the rich text editor functionality
+- **Radix UI**: For accessible UI components
+- **Tailwind CSS**: For styling
+- **TypeScript**: For type safety across the codebase
+- **Turborepo**: For managing the monorepo structure
+- **pnpm**: As the package manager
 
-https://novel.sh/docs/introduction
+## Repository Structure
 
-## Introduction
-
-[Novel](https://novel.sh/) is a Notion-style WYSIWYG editor with AI-powered autocompletions.
-
-https://github.com/steven-tey/novel/assets/28986134/2099877f-4f2b-4b1c-8782-5d803d63be5c
-
-<br />
-
-## Deploy Your Own
-
-You can deploy your own version of Novel to Vercel with one click:
-
-[![Deploy with Vercel](https://vercel.com/button)](https://stey.me/novel-deploy)
-
-## Setting Up Locally
-
-To set up Novel locally, you'll need to clone the repository and set up the following environment variables:
-
-- `OPENAI_API_KEY` – your OpenAI API key (you can get one [here](https://platform.openai.com/account/api-keys))
-- `BLOB_READ_WRITE_TOKEN` – your Vercel Blob read/write token (currently [still in beta](https://vercel.com/docs/storage/vercel-blob/quickstart#quickstart), but feel free to [sign up on this form](https://vercel.fyi/blob-beta) for access)
-
-If you've deployed this to Vercel, you can also use [`vc env pull`](https://vercel.com/docs/cli/env#exporting-development-environment-variables) to pull the environment variables from your Vercel project.
-
-To run the app locally, you can run the following commands:
+The repository is organized as a monorepo with the following structure:
 
 ```
-pnpm i
+mindcraft/
+├── apps/
+│   └── web/              # Next.js web application
+│       ├── components/   # React components
+│       ├── lib/          # Utility functions and hooks
+│       └── public/       # Static assets
+├── packages/
+│   ├── headless/         # Core editor functionality (mindcraft-editor)
+│   └── tsconfig/         # Shared TypeScript configuration
+```
+
+### Core Packages
+
+1. **mindcraft-editor** (packages/headless): 
+   - The core rich text editor package built on TipTap
+   - Customizable editor with extensions for various content types
+   - Slash commands for quick actions
+   - Image handling and resizing
+   - Code block syntax highlighting
+   - AI integration for text generation and suggestions
+
+2. **Web App** (apps/web):
+   - Next.js application that implements the editor
+   - Tailwind UI components
+   - AI-powered text generation capabilities
+   - Example implementation of the editor with additional features
+
+## Key Features
+
+- **Rich Text Editing**: Full-featured WYSIWYG editor with support for formatting, lists, code blocks, etc.
+- **Sidebar Integration**: Custom support for a sidebar to enhance the editing experience
+- **Slash Commands**: Quick access to formatting options and block insertions
+- **Image Support**: Upload, resize, and manipulate images within the editor
+- **Code Highlighting**: Syntax highlighting for code blocks
+- **AI Integration**: Generate text, improve writing, and get suggestions
+- **Responsive Design**: Works across different device sizes
+- **TypeScript Support**: Full type safety across the codebase
+
+## Editor Utilities and Type Safety
+
+Mindcraft provides a comprehensive set of utility functions to ensure type safety when working with editors and components. These utilities are located in `apps/web/lib/editor-wrapper.ts`.
+
+### Editor Utilities
+
+```typescript
+// Safely execute operations on an editor that might be null
+withEditor(editor, 
+  (editor) => editor.chain().focus().run(),
+  fallbackValue
+);
+
+// Safely check if a node or mark is active
+isEditorActive(editor, 'heading', { level: 1 });
+
+// Safely create a command chain that handles null editors
+safeChain(editor)?.focus().toggleBold().run();
+
+// Safely add AI highlighting to editor content
+addAIHighlight(editor);
+
+// Safely remove AI highlighting from editor content
+removeAIHighlight(editor);
+
+// Safely execute a command on the editor
+executeCommand(editor, (editor) => editor.chain().focus().run());
+
+// Safely check if a ref is not null before accessing its value
+const inputElement = safeRef(inputRef);
+
+// Safely handle nullable values with a fallback
+safeguard(value, 
+  (value) => value.toString(), 
+  'Default Value'
+);
+```
+
+### How Type Safety is Implemented
+
+Our approach to type safety follows several key principles:
+
+1. **Null Checking**: All utilities perform null checks before accessing properties or methods
+2. **Type Guards**: We use TypeScript type guards to ensure type safety at runtime
+3. **Generic Types**: Utilities use generic types to preserve type information
+4. **Fallback Values**: Optional fallback values can be provided for operations that might fail
+5. **Chained API**: Safe methods that mirror the editor's chain API
+
+### Component Integration
+
+Components that use the editor are designed to be type-safe and handle cases where the editor might be null:
+
+```tsx
+// Example of a component using our utilities
+const TextFormatButton = () => {
+  const { editor } = useEditor();
+  
+  return (
+    <Button 
+      onClick={() => safeChain(editor)?.focus().toggleBold().run()}
+      className={cn("text-xs", {
+        "text-blue-500": isEditorActive(editor, "bold")
+      })}
+    >
+      <BoldIcon className="h-4 w-4" />
+    </Button>
+  );
+};
+```
+
+## Specialized Components
+
+### AI Integration Components
+
+- **AISelector**: Provides AI-powered completion and suggestions
+- **AICompletionCommands**: Actions to apply AI-generated content
+- **GenerativeMenuSwitch**: Toggle between editing and AI generation
+
+### Editor Components
+
+- **NodeSelector**: Select and apply different node types
+- **TextButtons**: Format text with bold, italic, etc.
+- **LinkSelector**: Insert and edit links
+- **ColorSelector**: Apply text and background colors
+- **MathSelector**: Insert and edit mathematical equations
+- **SlashCommand**: Command palette for quick actions
+
+### UI Components
+
+- **Tooltip**: Enhanced tooltip using Radix UI
+- **Button**: Base button component with variants
+- **Popover**: Context menus and option selectors
+
+## Hooks
+
+Custom hooks provide reusable functionality:
+
+- **useEditor**: Access the editor instance safely
+- **useOnClickOutside**: Handle clicks outside a component
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- pnpm 9+
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/dliangthinks/mindcraft.git
+cd mindcraft
+
+# Install dependencies
+pnpm install
+
+# Start development server
 pnpm dev
 ```
 
-## Cross-framework support
+The development server will start at http://localhost:3000.
 
-While Novel is built for React, we also have a few community-maintained packages for non-React frameworks:
+## Development
 
-- Svelte: https://novel.sh/svelte
-- Vue: https://novel.sh/vue
+### Project Commands
 
-## VSCode Extension
+- `pnpm dev`: Start the development server
+- `pnpm build`: Build all packages and apps
+- `pnpm lint`: Run linting
+- `pnpm format`: Format code
+- `pnpm typecheck`: Run type checking
 
-Thanks to @bennykok, Novel also has a VSCode Extension: https://novel.sh/vscode
+### Type Checking
 
-https://github.com/steven-tey/novel/assets/28986134/58ebf7e3-cdb3-43df-878b-119e304f7373
+Ensure type safety by running:
 
-## Tech Stack
+```bash
+pnpm typecheck
+```
 
-Novel is built on the following stack:
+This command checks all packages for type errors.
 
-- [Next.js](https://nextjs.org/) – framework
-- [Tiptap](https://tiptap.dev/) – text editor
-- [OpenAI](https://openai.com/) - AI completions
-- [Vercel AI SDK](https://sdk.vercel.ai/docs) – AI library
-- [Vercel](https://vercel.com) – deployments
-- [TailwindCSS](https://tailwindcss.com/) – styles
-- [Cal Sans](https://github.com/calcom/font) – font
+## Best Practices
 
-## Contributing
+When working with this codebase, follow these guidelines:
 
-Here's how you can contribute:
-
-- [Open an issue](https://github.com/steven-tey/novel/issues) if you believe you've encountered a bug.
-- Make a [pull request](https://github.com/steven-tey/novel/pull) to add new features/make quality-of-life improvements/fix bugs.
-
-<a href="https://github.com/steven-tey/novel/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=steven-tey/novel" />
-</a>
-
-## Repo Activity
-
-![Novel.sh repo activity – generated by Axiom](https://repobeats.axiom.co/api/embed/2ebdaa143b0ad6e7c2ee23151da7b37f67da0b36.svg)
+1. **Always use provided utilities**: Use `withEditor`, `isEditorActive`, `safeChain`, etc. instead of direct editor access
+2. **Handle null/undefined values**: Always account for the possibility of null values
+3. **Test edge cases**: Verify that components work correctly when the editor is not available
+4. **Maintain consistent patterns**: Follow established patterns for component structure
 
 ## License
 
-Licensed under the [Apache-2.0 license](https://github.com/steven-tey/novel/blob/main/LICENSE).
+This project is licensed under the Apache License 2.0 - see the LICENSE file for details.
+
+
+
+##Changelog
+
+Mar 2
+Refactor: Migrate from Novel to Mindcraft, enhance type safety and editor utilities
+
+This comprehensive refactoring includes:
+- Renamed project from "Novel" to "Mindcraft"
+- Introduced robust type-safe editor utilities in `lib/editor-wrapper.ts`
+- Updated package configurations and dependencies
+- Added type safety documentation
+- Replaced direct editor access with safer wrapper functions
+- Migrated components to use new type-safe utilities
+- Added new tooltip and click-outside hook components

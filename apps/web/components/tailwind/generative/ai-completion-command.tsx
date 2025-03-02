@@ -1,6 +1,6 @@
 import { CommandGroup, CommandItem, CommandSeparator } from "../ui/command";
-import { useEditor } from "novel";
 import { Check, TextQuote, TrashIcon } from "lucide-react";
+import { useEditor, withEditor } from "@/lib/editor-wrapper";
 
 const AICompletionCommands = ({
   completion,
@@ -17,19 +17,21 @@ const AICompletionCommands = ({
           className="gap-2 px-4"
           value="replace"
           onSelect={() => {
-            const selection = editor.view.state.selection;
-
-            editor
-              .chain()
-              .focus()
-              .insertContentAt(
-                {
-                  from: selection.from,
-                  to: selection.to,
-                },
-                completion,
-              )
-              .run();
+            withEditor(editor, (editor) => {
+              const selection = editor.view.state.selection;
+              editor
+                .chain()
+                .focus()
+                .insertContentAt(
+                  {
+                    from: selection.from,
+                    to: selection.to,
+                  },
+                  completion,
+                )
+                .run();
+              return true;
+            }, false);
           }}
         >
           <Check className="h-4 w-4 text-muted-foreground" />
@@ -39,12 +41,15 @@ const AICompletionCommands = ({
           className="gap-2 px-4"
           value="insert"
           onSelect={() => {
-            const selection = editor.view.state.selection;
-            editor
-              .chain()
-              .focus()
-              .insertContentAt(selection.to + 1, completion)
-              .run();
+            withEditor(editor, (editor) => {
+              const selection = editor.view.state.selection;
+              editor
+                .chain()
+                .focus()
+                .insertContentAt(selection.to + 1, completion)
+                .run();
+              return true;
+            }, false);
           }}
         >
           <TextQuote className="h-4 w-4 text-muted-foreground" />

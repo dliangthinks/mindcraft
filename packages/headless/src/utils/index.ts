@@ -42,3 +42,7 @@ export const getAllContent = (editor: EditorInstance) => {
 
   return editor.storage.markdown.serializer.serialize(doc) as string;
 };
+
+export * from "./editor-utils";
+export * from "./component-types";
+export * from "./editor-commands";

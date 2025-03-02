@@ -21,7 +21,7 @@ import {
   UpdatedImage,
   UploadImagesPlugin,
   Youtube,
-} from "novel";
+} from "mindcraft-editor";
 
 import { cx } from "class-variance-authority";
 import { common, createLowlight } from "lowlight";
