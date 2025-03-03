@@ -13,7 +13,7 @@ import {
   handleCommandNavigation,
   handleImageDrop,
   handleImagePaste,
-} from "mindcraft-editor";
+} from "@/lib/editor";
 import { useEffect, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { defaultExtensions } from "./extensions";

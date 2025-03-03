@@ -22,26 +22,42 @@ The repository is organized as a monorepo with the following structure:
 ```
 mindcraft/
 ├── apps/
-│   └── web/              # Next.js web application
-│       ├── components/   # React components
-│       ├── lib/          # Utility functions and hooks
-│       └── public/       # Static assets
-├── packages/
-│   ├── headless/         # Core editor functionality (mindcraft-editor)
-│   └── tsconfig/         # Shared TypeScript configuration
+│   └── web/                  # Next.js web application
+│       ├── components/       # React components
+│       │   └── editor/       # Editor components
+│       │       ├── core/     # Core editor components
+│       │       └── ui/       # UI components for the editor
+│       ├── lib/              # Utility functions and hooks
+│       │   └── editor/       # Editor functionality
+│       │       ├── extensions/  # TipTap extensions
+│       │       ├── plugins/     # Editor plugins
+│       │       ├── utils/       # Editor utilities
+│       │       ├── hooks/       # Editor hooks
+│       │       └── types/       # Editor type definitions
+│       └── public/           # Static assets
+└── packages/
+    └── tsconfig/             # Shared TypeScript configuration
 ```
 
-### Core Packages
+### Core Components
 
-1. **mindcraft-editor** (packages/headless): 
-   - The core rich text editor package built on TipTap
-   - Customizable editor with extensions for various content types
-   - Slash commands for quick actions
-   - Image handling and resizing
-   - Code block syntax highlighting
-   - AI integration for text generation and suggestions
+1. **Editor Core** (apps/web/components/editor/core): 
+   - The core rich text editor components built on TipTap
+   - EditorRoot, EditorContent, EditorBubble components
+   - Command menu and bubble menu implementations
+   - Fully integrated with the web application
 
-2. **Web App** (apps/web):
+2. **Editor Extensions** (apps/web/lib/editor/extensions):
+   - Custom TipTap extensions for enhanced functionality
+   - AI highlighting, slash commands, mathematics rendering
+   - Twitter and YouTube embeds
+   - Image resizing and handling
+
+3. **Editor Plugins** (apps/web/lib/editor/plugins):
+   - Image upload and handling
+   - Drag and drop functionality
+
+4. **Web App** (apps/web):
    - Next.js application that implements the editor
    - Tailwind UI components
    - AI-powered text generation capabilities
@@ -220,9 +236,50 @@ For successful deployment to Vercel, ensure:
 
 - **Build Cache Issues**: If changes aren't reflected after deployment, try clearing the Vercel build cache.
 
+## Importing Editor Components
+
+After the package restructuring, you can import editor components directly from the web app:
+
+```tsx
+// Import from the main editor entry point
+import { 
+  EditorRoot, 
+  EditorContent, 
+  EditorBubble,
+  useEditor 
+} from "@/lib/editor";
+
+// Import specific extensions
+import { 
+  AIHighlight, 
+  Mathematics, 
+  Command 
+} from "@/lib/editor";
+
+// Import plugins
+import { 
+  UploadImagesPlugin, 
+  handleImageDrop, 
+  handleImagePaste 
+} from "@/lib/editor";
+```
+
 ## Changelog
 
-Mar 2
+Mar 3, 2024
+Refactor: Merged headless package into web app
+
+This major architectural change includes:
+- Migrated all editor components from the headless package into the web app
+- Restructured the codebase to use a more integrated approach
+- Updated import paths across all components
+- Improved TypeScript integration with better path aliases
+- Removed the separate package dependency in favor of direct imports
+- Enhanced maintainability by consolidating code into a single package
+- Fixed circular dependencies and import issues
+- Streamlined the build process
+
+Mar 2, 2024
 Refactor: Migrate from Novel to Mindcraft, enhance type safety and editor utilities
 
 This comprehensive refactoring includes:

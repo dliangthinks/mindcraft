@@ -1,7 +1,7 @@
 import { ArrowDownWideNarrow, CheckCheck, RefreshCcwDot, StepForward, WrapText } from "lucide-react";
 import { CommandGroup, CommandItem, CommandSeparator } from "../ui/command";
 import { useEditor, withEditor } from "@/lib/editor-wrapper";
-import { getPrevText } from "mindcraft-editor";
+import { getPrevText } from "@/lib/editor";
 
 const options = [
   {

@@ -1,4 +1,4 @@
-import { createImageUpload } from "mindcraft-editor";
+import { createImageUpload } from "@/lib/editor";
 import { toast } from "sonner";
 
 const onUpload = (file: File) => {

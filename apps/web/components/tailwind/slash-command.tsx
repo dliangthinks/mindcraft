@@ -13,7 +13,7 @@ import {
   Twitter,
   Youtube,
 } from "lucide-react";
-import { Command, createSuggestionItems, renderItems } from "mindcraft-editor";
+import { Command, createSuggestionItems, renderItems } from "@/lib/editor";
 import { uploadFn } from "./image-upload";
 import { safeguard } from "@/lib/editor-wrapper";
 

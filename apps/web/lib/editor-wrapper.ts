@@ -1,4 +1,5 @@
-import { useEditor, addAIHighlight as originalAddAIHighlight, removeAIHighlight as originalRemoveAIHighlight } from "mindcraft-editor";
+import { useEditor } from "@/lib/editor";
+import { addAIHighlight as originalAddAIHighlight, removeAIHighlight as originalRemoveAIHighlight } from "@/lib/editor/extensions/ai-highlight";
 export { useEditor };
 
 // Define the Editor type based on how it's used in the components

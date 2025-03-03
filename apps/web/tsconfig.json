@@ -1,5 +1,5 @@
 {
-  "extends": "tsconfig/next.json",
+  "extends": "./tsconfig/next.json",
   "compilerOptions": {
     "plugins": [
       {
@@ -9,6 +9,33 @@
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "@editor/*": [
+        "./lib/editor/*"
+      ],
+      "@editor/components/*": [
+        "./components/editor/*"
+      ],
+      "@editor/core/*": [
+        "./components/editor/core/*"
+      ],
+      "@editor/ui/*": [
+        "./components/editor/ui/*"
+      ],
+      "@editor/extensions/*": [
+        "./lib/editor/extensions/*"
+      ],
+      "@editor/plugins/*": [
+        "./lib/editor/plugins/*"
+      ],
+      "@editor/utils/*": [
+        "./lib/editor/utils/*"
+      ],
+      "@editor/hooks/*": [
+        "./lib/editor/hooks/*"
+      ],
+      "@editor/types/*": [
+        "./lib/editor/types/*"
       ]
     },
     "strictNullChecks": true

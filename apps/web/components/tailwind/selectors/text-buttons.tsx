@@ -1,7 +1,7 @@
 import { Button } from "@/components/tailwind/ui/button";
 import { cn } from "@/lib/utils";
 import { BoldIcon, CodeIcon, ItalicIcon, StrikethroughIcon, UnderlineIcon } from "lucide-react";
-import { EditorBubbleItem } from "mindcraft-editor";
+import { EditorBubbleItem } from "@/lib/editor";
 import type { SelectorItem } from "./node-selector";
 import { useEditor, isEditorActive, safeChain } from "@/lib/editor-wrapper";
 

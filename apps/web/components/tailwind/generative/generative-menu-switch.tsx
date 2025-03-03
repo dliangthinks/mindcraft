@@ -1,9 +1,9 @@
-import { EditorBubble, useEditor } from "mindcraft-editor";
+import { EditorBubble } from "@/lib/editor";
 import { Fragment, type ReactNode, useEffect } from "react";
 import { Button } from "../ui/button";
 import Magic from "../ui/icons/magic";
 import { AISelector } from "./ai-selector";
-import { removeAIHighlight, safeChain } from "@/lib/editor-wrapper";
+import { removeAIHighlight, safeChain, useEditor } from "@/lib/editor-wrapper";
 
 interface GenerativeMenuSwitchProps {
   children: ReactNode;

@@ -11,7 +11,8 @@ import {
   TextIcon,
   TextQuote,
 } from "lucide-react";
-import { EditorBubbleItem, type EditorInstance } from "mindcraft-editor";
+import { EditorBubbleItem } from "@/lib/editor";
+import type { EditorInstance } from "@/lib/editor";
 
 import { Button } from "@/components/tailwind/ui/button";
 import { PopoverContent, PopoverTrigger } from "@/components/tailwind/ui/popover";

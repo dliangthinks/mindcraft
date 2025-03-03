@@ -111,29 +111,93 @@ Below is a granular task list for merging the packages. Each task is designed to
 
 ### Phase 3: Staged Implementation
 
-#### Stage 1: Headless Package Migration
-- [ ] **Task 3.1:** Create new directory structure in web app for editor code
-- [ ] **Task 3.2:** Copy all utility functions from headless package to web app
-- [ ] **Task 3.3:** Update imports in the copied utility functions
-- [ ] **Task 3.4:** Copy core editor functionality from headless package
-- [ ] **Task 3.5:** Update imports in the copied core editor code
-- [ ] **Task 3.6:** Copy all UI components from headless package
-- [ ] **Task 3.7:** Update imports in the copied UI components
-- [ ] **Task 3.8:** Copy and adapt any tests from headless package
-- [ ] **Task 3.9:** Verify all copied code compiles successfully
+#### Stage 1: Initial Migration
+- [ ] **Task 3.1.1:** Create directory structure in web app for editor code
+   - Create core directories for components, extensions, plugins, utils, etc.
+   - Set up the folder hierarchy according to the planned structure
 
-#### Stage 2: Dependency Integration
-- [ ] **Task 3.10:** Merge dependencies from headless package into web app package.json
-- [ ] **Task 3.11:** Update any conflicting dependency versions
-- [ ] **Task 3.12:** Remove any redundant dependencies
-- [ ] **Task 3.13:** Run npm/pnpm install to update node_modules
-- [ ] **Task 3.14:** Verify all dependencies are working correctly
+- [ ] **Task 3.1.2:** Update TypeScript Configuration
+   - Move shared TypeScript configurations from tsconfig package to web app
+   - Update path aliases in the web app's tsconfig.json
 
-#### Stage 3: Migration Validation
-- [ ] **Task 3.15:** Update imports in web app to use the local copy of editor
-- [ ] **Task 3.16:** Fix any type errors that arise from the migration
-- [ ] **Task 3.17:** Run all tests to ensure functionality is maintained
-- [ ] **Task 3.18:** Manually test critical editor functionality
+- [ ] **Task 3.1.3:** Migrate Core Components
+   - Move editor components (EditorRoot, EditorContent, etc.) to web app
+   - Create component barrel files for clean exports
+
+- [ ] **Task 3.1.4:** Migrate Extensions
+   - Move all TipTap extensions to the web app
+   - Create extension barrel files for organized exports
+
+- [ ] **Task 3.1.5:** Migrate Plugins
+   - Move editor plugins (image upload, etc.) to the web app
+   - Create plugin barrel files
+
+- [ ] **Task 3.1.6:** Migrate Utilities
+   - Move utility functions to the web app
+   - Create utility barrel files
+
+- [ ] **Task 3.1.7:** Migrate Hooks
+   - Move custom React hooks to the web app
+   - Create hooks barrel file
+
+- [ ] **Task 3.1.8:** Migrate Types
+   - Move TypeScript type definitions to the web app
+   - Create types barrel file
+
+- [ ] **Task 3.1.9:** Create Main Editor API
+   - Set up the main entry point that re-exports all functionality
+   - Ensure API compatibility with the original package
+
+- [ ] **Task 3.1.10:** Update Package.json
+   - Add necessary dependencies from the headless package
+   - Update development dependencies to newer versions
+   - Add build scripts for the editor code
+
+- [ ] **Task 3.1.11:** Create tsup Configuration
+   - Set up the build tool configuration for the editor code
+   - Configure output formats and options
+
+- [ ] **Task 3.1.12:** Update Next.js Configuration
+   - Remove transpilePackages setting for the headless package
+   - Make any necessary adjustments for the integrated code
+
+- [ ] **Task 3.1.13:** Initial Import Path Fixes
+   - Update import paths in the web app to use the new structure
+   - Run search and replace for common import patterns
+
+- [ ] **Task 3.1.14:** Initial Test of Structure
+   - Run type checking to verify the directory structure
+   - Test building the editor code and Next.js app
+
+#### Stage 2: Import Path Resolution and Basic Issues
+- [ ] **Task 3.2.1:** Fix component import paths
+- [ ] **Task 3.2.2:** Fix extension import paths
+- [ ] **Task 3.2.3:** Fix utility import paths
+- [ ] **Task 3.2.4:** Fix plugin import paths
+- [ ] **Task 3.2.5:** Fix hook import paths
+- [ ] **Task 3.2.6:** Fix type import paths
+- [ ] **Task 3.2.7:** Resolve basic TypeScript errors
+- [ ] **Task 3.2.8:** Test component rendering
+
+#### Stage 3: TypeScript and Component Integration
+- [ ] **Task 3.3.1:** Resolve complex TypeScript errors
+- [ ] **Task 3.3.2:** Fix component integration issues
+- [ ] **Task 3.3.3:** Ensure proper state management
+- [ ] **Task 3.3.4:** Fix styling and Tailwind integration
+- [ ] **Task 3.3.5:** Test extension functionality
+- [ ] **Task 3.3.6:** Test plugin functionality
+- [ ] **Task 3.3.7:** Verify editor initialization
+- [ ] **Task 3.3.8:** Test editor commands and operations
+
+#### Stage 4: Testing and Validation
+- [ ] **Task 3.4.1:** Run unit tests for components
+- [ ] **Task 3.4.2:** Test editor functionality end-to-end
+- [ ] **Task 3.4.3:** Verify performance metrics
+- [ ] **Task 3.4.4:** Test edge cases and error handling
+- [ ] **Task 3.4.5:** Validate accessibility
+- [ ] **Task 3.4.6:** Test in different browsers
+- [ ] **Task 3.4.7:** Verify build output
+- [ ] **Task 3.4.8:** Document any remaining issues
 
 ### Phase 4: Refactor and Clean-up
 

@@ -1,5 +1,5 @@
 import { Check, ChevronDown } from "lucide-react";
-import { EditorBubbleItem } from "mindcraft-editor";
+import { EditorBubbleItem } from "@/lib/editor";
 import { useEditor, isEditorActive, safeChain } from "@/lib/editor-wrapper";
 
 import { Button } from "@/components/tailwind/ui/button";
