@@ -165,21 +165,6 @@ Custom hooks provide reusable functionality:
 - Node.js 18+
 - pnpm 9+
 
-### Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/dliangthinks/mindcraft.git
-cd mindcraft
-
-# Install dependencies
-pnpm install
-
-# Start development server
-pnpm dev
-```
-
-The development server will start at http://localhost:3000.
 
 ## Development
 
@@ -210,9 +195,7 @@ When working with this codebase, follow these guidelines:
 3. **Test edge cases**: Verify that components work correctly when the editor is not available
 4. **Maintain consistent patterns**: Follow established patterns for component structure
 
-## License
 
-This project is licensed under the Apache License 2.0 - see the LICENSE file for details.
 
 ## Deployment
 
@@ -251,8 +234,9 @@ This comprehensive refactoring includes:
 - Migrated components to use new type-safe utilities
 - Added new tooltip and click-outside hook components
 
-Mar 15
 Fix: Update Turborepo configuration for correct build order
 - Updated `typecheck` task to depend on `^build` instead of `^topo`
 - Ensures local packages are built before they are type-checked by dependents
 - Added deployment documentation
+
+Default page: layout.tsx, content.ts, page.tsx

@@ -6,9 +6,10 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import Providers from "./providers";
 
-const title = "Novel - Notion-style WYSIWYG editor with AI-powered autocompletions";
+//this is the title of the page as you see in the browser tab
+const title = "MindDraft";
 const description =
-  "Novel is a Notion-style WYSIWYG editor with AI-powered autocompletions. Built with Tiptap, OpenAI, and Vercel AI SDK.";
+  "next-generation writing app designed to transform the writing process into a fully collaborative experience";
 
 export const metadata: Metadata = {
   title,
@@ -17,13 +18,8 @@ export const metadata: Metadata = {
     title,
     description,
   },
-  twitter: {
-    title,
-    description,
-    card: "summary_large_image",
-    creator: "@steventey",
-  },
-  metadataBase: new URL("https://novel.sh"),
+
+  metadataBase: new URL("https://mindcraft-next.vercel.app"),
 };
 
 export const viewport: Viewport = {
